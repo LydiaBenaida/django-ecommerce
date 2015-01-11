@@ -104,7 +104,7 @@ class Photo(models.Model):
     Les photos permettent d'illustrer les produits afin d'inciter l'internaute à les acheter.
     """
     produit = models.ForeignKey(Products)
-    photo = models.ImageField()
+    photo = models.ImageField(upload_to='commerce/')
 
 
 class Order(models.Model):

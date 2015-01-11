@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>Catégories</h1>
+
+    <ul>
+        {% for category in categories %}
+            <li>{{ category.name }}</li>
+        {% endfor %}
+    </ul>
+
+    <h1>Derniers produits</h1>
+
+    <ul>
+        {% for product in products %}
+            <li>{{ product.name }} <a href="{% url 'commerce:add_to_cart' product.id 1 %}">Ajouter au panier</a></li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

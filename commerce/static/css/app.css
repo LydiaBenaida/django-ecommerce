@@ -1,0 +1,19 @@
+body > .container {
+    padding-top: 80px;
+}
+
+.navbar {
+    background-color: #deffd5;
+}
+
+.nav>li>a:hover, .nav>li>a:focus {
+    background-color: yellowgreen;
+}
+
+a:hover, a:focus {
+    color: darkgreen;
+}
+
+a{
+    color: forestgreen;
+}

@@ -5,7 +5,7 @@
       <configuration>
         <option name="rootFolder" value="$MODULE_DIR$" />
         <option name="settingsModule" value="ecommerce/settings.py" />
-        <option name="manageScript" value="manage.py" />
+        <option name="manageScript" value="ecommerce/manage.py" />
         <option name="environment" value="&lt;map/&gt;" />
       </configuration>
     </facet>

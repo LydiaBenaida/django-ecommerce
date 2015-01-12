@@ -56,6 +56,7 @@ ROOT_URLCONF = 'ecommerce.urls'
 WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases

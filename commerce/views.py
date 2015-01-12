@@ -5,7 +5,7 @@ from commerce.models import *
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-
+from django.contrib.auth import authenticate, login, logout
 
 def index(request):
     msg = messages.get_messages(request)
@@ -15,8 +15,30 @@ def index(request):
 
     panier_from_session = request.session.get('cart')
 
-    return render_to_response('index.html', {'products': products, 'categories': categories, 'panier': panier_from_session, 'messages': msg})
+    return render(request, 'index.html', {'products': products, 'categories': categories, 'panier': panier_from_session, 'messages': msg})
 
+def sign_in(request):
+    msg = None
+    if request.method == 'POST':
+        user = authenticate(username=request.POST['username'], password=request.POST['password'])
+        if user is not None:
+            # the password verified for the user
+            if user.is_active:
+                login(request, user)
+                return HttpResponseRedirect(reverse('commerce:root'))
+            else:
+                msg = "The password is valid, but the account has been disabled!"
+        else:
+            # the authentication system was unable to verify the username and password
+            msg = "The username and password were incorrect."
+
+    return render(request, 'signin.html', {
+            'mes': msg
+        })
+
+def sign_out(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('commerce:root'))
 
 def add_to_cart(request, product_id, qty):
 
@@ -77,7 +99,7 @@ def display_cart(request):
             product.ttc = product.ht + product.tva
             total += product.ttc
 
-        return render_to_response('cart.html', {'products': products, 'total': total})
+        return render(request, 'cart.html', {'products': products, 'total': total})
 
     else:
-        return render_to_response('cart.html')
+        return render(request, 'cart.html')

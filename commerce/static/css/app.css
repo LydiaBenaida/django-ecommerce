@@ -58,3 +58,19 @@ a{
     padding: 9px;
     color: #333;
 }
+
+.divider{
+    height: 250px;
+    margin-left: 32px;
+    text-align: center;
+    border-left : 4px solid #deffd5;
+}
+
+.word{
+    background-color: #deffd5;
+    padding: 20px;
+    margin-left: -35px;
+    position: relative;
+    top: 100px;
+    border-radius: 50px;
+}

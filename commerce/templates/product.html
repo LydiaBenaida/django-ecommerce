@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <div class="row">
+
+            <div class="col-md-3">
+                <p class="lead">Rayons</p>
+                <div class="list-group">
+                    {% if product.category.parent_category %}
+                        <a href="{% url 'commerce:display_category' product.category.parent_category.id %}" class="list-group-item"><i class="fa fa-angle-up"></i>&nbsp; {{ product.category.parent_category.name }}</a>
+                    {% endif %}
+                </div>
+                <div class="list-group">
+                    {% for category in product.category.childs_categories %}
+                        <a href="{% url 'commerce:display_category' category.id %}" class="list-group-item"><i class="fa fa-angle-right"></i>&nbsp; {{ category.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <ol class="breadcrumb">
+                    {% for category in product.category.breadcrum %}
+                        <li><a href="{% url 'commerce:display_category' category.id %}">{{ category.name }}</a></li>
+                    {% endfor %}
+                </ol>
+
+                <p class="lead">{{ product.name }}<a href="{% url 'commerce:add_to_cart' product.id 1 %}" class="pull-right btn btn-success"><i class="fa fa-shopping-cart"></i> Acheter pour <strong>{{ product.price_including_vat }}</strong> €</a></p>
+
+                <p>{{ product.short_desc }}</p>
+
+                {% if pictures %}
+                    <div class="row carousel-holder">
+                        <div class="col-md-12">
+                            <div id="carousel" class="carousel slide" data-interval="5000" data-ride="carousel">
+                                <ol class="carousel-indicators">
+                                    {% for picture in pictures %}
+                                        <li data-target="#carousel" data-slide-to="{{ forloop.counter0 }}" class=""></li>
+                                    {% endfor %}
+                                </ol>
+                                <div class="carousel-inner">
+                                    {% for picture in pictures %}
+                                        <div class="item{% if forloop.counter0 == 0 %} active{% endif %}">
+                                            <img class="slide-image" src="/media/{{ picture.photo }}" />
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <a class="left carousel-control" href="#carousel" data-slide="prev">
+                                    <span class="glyphicon glyphicon-chevron-left"></span>
+                                </a>
+                                <a class="right carousel-control" href="#carousel" data-slide="next">
+                                    <span class="glyphicon glyphicon-chevron-right"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <p>{{ product.long_desc }}</p>
+
+
+
+
+            </div>
+
+        </div>
+
+{% endblock %}

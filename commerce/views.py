@@ -1,11 +1,12 @@
 # coding=utf-8
-from django.shortcuts import render
 from commerce.models import *
-from django.contrib import messages
-from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from django.contrib.auth import authenticate, login, logout
 from django import forms
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 
 
 class RegisterForm(forms.Form):
@@ -18,14 +19,13 @@ class RegisterForm(forms.Form):
 
 def index(request):
     msg = messages.get_messages(request)
-    products = Products.objects.all()
+    products = Products.objects.select_related('vat').order_by('-id')[:5]
     categories = Category.objects.filter(parent_category_id=None)
+    carousel = Photo.objects.all().order_by('-id')[:5]
     # request.session.clear()
 
-    panier_from_session = request.session.get('cart')
-
     return render(request, 'index.html',
-                  {'products': products, 'categories': categories, 'panier': panier_from_session, 'messages': msg})
+                  {'products': products, 'categories': categories, 'carousel': carousel})
 
 
 def sign_in(request, goto='commerce:root'):
@@ -54,6 +54,46 @@ def sign_in(request, goto='commerce:root'):
 def sign_out(request):
     logout(request)
     return HttpResponseRedirect(reverse('commerce:root'))
+
+
+def display_category(request, category_id):
+    """
+    Cette fonction permet de visualiser les produits contenus dans une catégorie.
+    :type request:
+    :param request:
+    :param category_id: Id de la catégorie à visualiser
+    :return:
+    """
+    category = get_object_or_404(Category, pk=category_id)
+    product_list = category.all_products()
+    paginator = Paginator(product_list, 12)
+
+    page = request.GET.get('page')
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        products = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        products = paginator.page(paginator.num_pages)
+
+    return render(request, 'category.html', {'category': category, 'products': products})
+
+
+def display_product(request, product_id):
+    """
+    Cette fonction permet de visualiser un produit.
+    :type request:
+    :param request:
+    :param product_id: Id du produit à visualiser
+    :return:
+    """
+
+    product = get_object_or_404(Products, pk=product_id)
+    pictures = Photo.objects.filter(product__pk=product.id)
+
+    return render(request, 'product.html', {'product': product, 'pictures': pictures})
 
 
 def add_to_cart(request, product_id, qty):

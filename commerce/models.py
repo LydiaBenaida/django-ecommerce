@@ -79,6 +79,32 @@ class Category(models.Model):
     def __unicode__(self):
         return self.name
 
+    def breadcrum(self):
+        """Retourne un fil d'ariane permettant à l'utilisateur d'afficher l'arborescence de la catégorie"""
+        breadcrum = []
+        breadcrum.append(self)
+
+        while self.parent_category:
+            breadcrum.insert(0,self.parent_category)
+            self = self.parent_category
+
+        return breadcrum
+
+    def childs_categories(self):
+        """Retourne les catégories enfant de la catégorie"""
+        childs = Category.objects.filter(parent_category_id__exact=self.id)
+        return childs
+
+    def all_products(self):
+        """ """
+        next_main_category = Category.objects.filter(id__gt=self.id,parent_category_id=None).order_by('id').first()
+
+        if not next_main_category:
+            products = Products.objects.filter(category_id__gte=(self.id))
+        else:
+            products = Products.objects.filter(category_id__range=(self.id,next_main_category.id-1))
+        return products
+
 
 class Products(models.Model):
     """
@@ -99,13 +125,17 @@ class Products(models.Model):
     def __unicode__(self):
         return self.name
 
+    def price_including_vat(self):
+        "Retourne le prix TTC du produit"
+        return round(self.price + (self.price * self.vat.percent),2)
+
 
 class Photo(models.Model):
     """
     Les photos permettent d'illustrer les produits afin d'inciter l'internaute à les acheter.
     """
-    produit = models.ForeignKey(Products)
-    photo = models.ImageField(upload_to='commerce/')
+    product = models.ForeignKey(Products)
+    photo = models.ImageField(upload_to='commerce/media')
 
 
 class Order(models.Model):

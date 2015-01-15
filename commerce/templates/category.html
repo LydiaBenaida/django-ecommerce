@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <div class="row">
+            <div class="col-md-3">
+                <p class="lead">Rayons</p>
+                <div class="list-group">
+                    {% if category.parent_category %}
+                        <a href="{% url 'commerce:display_category' category.parent_category.id %}" class="list-group-item"><i class="fa fa-angle-up"></i>&nbsp; {{ category.parent_category.name }}</a>
+                    {% else %}
+                        <a href="{% url 'commerce:root' %}" class="list-group-item"><i class="fa fa-home"></i>&nbsp; Accueil du site</a>
+                    {% endif %}
+                </div>
+                <div class="list-group">
+                    {% for category in category.childs_categories %}
+                        <a href="{% url 'commerce:display_category' category.id %}" class="list-group-item"><i class="fa fa-angle-right"></i>&nbsp; {{ category.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <ol class="breadcrumb">
+                    {% for category in category.breadcrum %}
+                        <li><a href="{% url 'commerce:display_category' category.id %}">{{ category.name }}</a></li>
+                    {% endfor %}
+                </ol>
+
+                <div class="row">
+                    {% for product in products %}
+                        <div class="col-sm-4 col-lg-4 col-md-4">
+                            <div class="thumbnail">
+                                {% if product.thumbnail %}
+                                    <img src="/media/{{ product.thumbnail }}" alt="">
+                                {% else %}
+                                    <img class="slide-image" src="http://placehold.it/320x150" alt="">
+                                {% endif %}
+                                <div class="caption">
+                                    <h4 class="pull-right">{{ product.price_including_vat }} €</h4>
+                                    <h4><a href="{% url 'commerce:display_product' product.id %}">{{ product.name }}</a>
+                                    </h4>
+                                    <p>{{ product.short_desc }}</p>
+                                </div>
+                                <!--
+                                <div class="ratings">
+                                    <p class="pull-right">18 reviews</p>
+                                    <p>
+                                        <span class="glyphicon glyphicon-star"></span>
+                                        <span class="glyphicon glyphicon-star"></span>
+                                        <span class="glyphicon glyphicon-star"></span>
+                                        <span class="glyphicon glyphicon-star"></span>
+                                        <span class="glyphicon glyphicon-star-empty"></span>
+                                    </p>
+                                </div>
+                                -->
+                            </div>
+                        </div>
+                        <!-- <a href="{% url 'commerce:add_to_cart' product.id 1 %}">Ajouter au panier</a> -->
+                    {% endfor %}
+                </div>
+
+                <div class="row pull-right">
+                    <nav>
+                        <ul class="pagination">
+                            {% if products.has_previous %}
+                                <li class="previous"><a href="?page={{ products.previous_page_number }}"><span aria-hidden="true">&larr;</span> page précédente</a></li>
+                            {% endif %}
+                            <li class="disabled"><a href="#">Page {{ products.number }} sur {{ products.paginator.num_pages }}</a></li>
+                            {% if products.has_next %}
+                                <li><a href="?page={{ products.next_page_number }}"> page suivante <span aria-hidden="true">&rarr;</span></a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+        </div>
+
+{% endblock %}

@@ -30,19 +30,26 @@ def index(request):
 
 def sign_in(request, goto='commerce:root'):
     msg = None
-    form = RegisterForm()
+
     if request.method == 'POST':
-        user = authenticate(username=request.POST['username'], password=request.POST['password'])
-        if user is not None:
-            # the password verified for the user
-            if user.is_active:
-                login(request, user)
-                return HttpResponseRedirect(reverse(goto))
-            else:
-                msg = "The password is valid, but the account has been disabled!"
+
+        if request.POST['register']:
+            form = RegisterForm(request.POST)
+            print
         else:
-            # the authentication system was unable to verify the username and password
-            msg = "The username and password were incorrect."
+            user = authenticate(username=request.POST['username'], password=request.POST['password'])
+            if user is not None:
+                # the password verified for the user
+                if user.is_active:
+                    login(request, user)
+                    return HttpResponseRedirect(reverse(goto))
+                else:
+                    msg = "The password is valid, but the account has been disabled!"
+            else:
+                # the authentication system was unable to verify the username and password
+                msg = "The username and password were incorrect."
+    else:
+        form = RegisterForm()
 
     return render(request, 'signin.html', {
         'mes': msg,

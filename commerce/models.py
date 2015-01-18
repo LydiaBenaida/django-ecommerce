@@ -8,8 +8,16 @@ class Client(models.Model):
     Un client est une personne inscrite au site dans le but d'effectuer une commande.
     """
     user = models.ForeignKey(User, verbose_name="Utilisateur associé")
-    default_shipping_address = models.ForeignKey("Address", related_name="default_shipping_address", null=True, verbose_name="Adresse de livraison par défaut")
-    default_invoicing_address = models.ForeignKey("Address", related_name="default_invoicing_address", null=True, verbose_name="Adresse de facturation par défaut")
+    default_shipping_address = models.ForeignKey("Address",
+                                                 related_name="default_shipping_address",
+                                                 null=True,
+                                                 verbose_name="Adresse de livraison par défaut"
+                                                 )
+    default_invoicing_address = models.ForeignKey("Address",
+                                                  related_name="default_invoicing_address",
+                                                  null=True,
+                                                  verbose_name="Adresse de facturation par défaut"
+                                                  )
 
     def __unicode__(self):
         return self.user.username + " (" + self.user.first_name + " " + self.user.last_name + ")"
@@ -42,11 +50,11 @@ class Address(models.Model):
     workphone = models.CharField(max_length=10, blank=True, verbose_name="Téléphone travail")
 
     class Meta:
-        verbose_name ='Adresse'
+        verbose_name = 'Adresse'
         verbose_name_plural = 'Adresses'
 
     def __unicode__(self):
-        return self.address
+        return self.first_name + " " + self.last_name + " (" + self.address + ", " + self.postcode + " " + self.city + ")"
 
 
 class VAT(models.Model):
@@ -56,7 +64,7 @@ class VAT(models.Model):
     percent = models.FloatField(verbose_name="Taux de TVA (décimal)")
 
     class Meta:
-        verbose_name ='Taux de TVA'
+        verbose_name = 'Taux de TVA'
         verbose_name_plural = 'Taux de TVA'
 
     def __unicode__(self):
@@ -68,11 +76,11 @@ class Category(models.Model):
     Les catégories permettent d'organiser les produits en rayons d'articles similaires.
     """
     name = models.CharField(max_length=150, verbose_name="Nom de la catégorie")
-    short_desc = models.CharField(max_length=150, verbose_name="Description courte",blank=True)
+    short_desc = models.CharField(max_length=150, verbose_name="Description courte", blank=True)
     parent_category = models.ForeignKey("Category", null=True, blank=True, verbose_name="Catégorie parente")
 
     class Meta:
-        verbose_name ='Catégorie de produits'
+        verbose_name = 'Catégorie de produits'
         verbose_name_plural = 'Catégories de produits'
 
     def __unicode__(self):
@@ -80,11 +88,11 @@ class Category(models.Model):
 
     def breadcrum(self):
         """Retourne un fil d'ariane permettant à l'utilisateur d'afficher l'arborescence de la catégorie"""
-        breadcrum = []
+        breadcrum = list()
         breadcrum.append(self)
 
         while self.parent_category:
-            breadcrum.insert(0,self.parent_category)
+            breadcrum.insert(0, self.parent_category)
             self = self.parent_category
 
         return breadcrum
@@ -96,12 +104,12 @@ class Category(models.Model):
 
     def all_products(self):
         """ """
-        next_main_category = Category.objects.filter(id__gt=self.id,parent_category_id=None).order_by('id').first()
+        next_main_category = Category.objects.filter(id__gt=self.id, parent_category_id=None).order_by('id').first()
 
         if not next_main_category:
-            products = Product.objects.filter(category_id__gte=(self.id))
+            products = Product.objects.filter(category_id__gte=self.id)
         else:
-            products = Product.objects.filter(category_id__range=(self.id,next_main_category.id-1))
+            products = Product.objects.filter(category_id__range=(self.id, next_main_category.id-1))
         return products
 
 
@@ -118,15 +126,15 @@ class Product(models.Model):
     thumbnail = models.ImageField(verbose_name="Miniature du produit", upload_to='commerce/media', null=True)
 
     class Meta:
-        verbose_name ='Produit'
+        verbose_name = 'Produit'
         verbose_name_plural = 'Produits'
 
     def __unicode__(self):
         return self.name
 
     def price_including_vat(self):
-        "Retourne le prix TTC du produit"
-        return round(self.price + (self.price * self.vat.percent),2)
+        """Retourne le prix TTC du produit"""
+        return round(self.price + (self.price * self.vat.percent), 2)
 
 
 class Photo(models.Model):
@@ -142,10 +150,16 @@ class Order(models.Model):
     Une commande est passée par un client et comprend des lignes de commandes ainsi que des adresses.
     """
     client = models.ForeignKey(Client, verbose_name="Client ayant passé commande")
-    shipping_address = models.ForeignKey(Address, verbose_name="Adresse de livraison", related_name="order_shipping_address")
-    invoicing_address = models.ForeignKey(Address, verbose_name="Adresse de facturation", related_name="order_invoicing_address")
-    order_date = models.DateField(verbose_name="Date de la commande",auto_now=True)
-    shipping_date = models.DateField(verbose_name="Date de l'expédition",blank=True)
+    shipping_address = models.ForeignKey(Address,
+                                         verbose_name="Adresse de livraison",
+                                         related_name="order_shipping_address"
+                                         )
+    invoicing_address = models.ForeignKey(Address,
+                                          verbose_name="Adresse de facturation",
+                                          related_name="order_invoicing_address"
+                                          )
+    order_date = models.DateField(verbose_name="Date de la commande", auto_now=True)
+    shipping_date = models.DateField(verbose_name="Date de l'expédition", null=True)
     WAITING = 'W'
     PAID = 'P'
     SHIPPED = 'S'
@@ -157,10 +171,10 @@ class Order(models.Model):
         (CANCELED, 'Annulée'),
     )
     status = models.CharField(max_length=1, choices=STATUS, default=WAITING, verbose_name="Statut de la commande")
-    price = models.FloatField(verbose_name="Montant total")
+    stripe_charge_id = models.CharField(max_length=30, verbose_name="Identifiant de transaction Stripe", blank=True)
 
     class Meta:
-        verbose_name ='Commande'
+        verbose_name = 'Commande'
         verbose_name_plural = 'Commandes'
 
 
@@ -172,13 +186,22 @@ class OrderDetail(models.Model):
     order = models.ForeignKey(Order, verbose_name="Commande associée")
     product = models.ForeignKey(Product)
     qty = models.IntegerField(verbose_name="Quantité")
-    price = models.FloatField(verbose_name="Prix HT")
-    vat = models.FloatField(verbose_name="TVA")
-    total_price = models.FloatField(verbose_name="Prix TTC")
+    product_unit_price = models.FloatField(verbose_name="Prix unitaire du produit")
+    vat = models.FloatField(verbose_name="Taux de TVA")
 
     class Meta:
         verbose_name = 'Ligne d\'une commande'
         verbose_name_plural = 'Lignes de commandes'
+
+    def total_ht(self):
+        return round(self.product_unit_price * float(self.qty), 2)
+
+    def total_vat(self):
+        return round(self.product_unit_price * float(self.qty) * self.vat, 2)
+
+    def total(self):
+        return round((self.product_unit_price * float(self.qty)) +
+                     (self.product_unit_price * float(self.qty) * self.vat), 2)
 
 
 class CartLine(models.Model):
@@ -194,7 +217,7 @@ class CartLine(models.Model):
         verbose_name_plural = 'Lignes d\'un panier client'
 
     def total_ht(self):
-        return round(self.product.price * float(self.quantity),2)
+        return round(self.product.price * float(self.quantity), 2)
 
     def total_vat(self):
         return round(self.product.price * float(self.quantity) * self.product.vat.percent, 2)

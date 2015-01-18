@@ -15,4 +15,5 @@ urlpatterns = patterns('',
     url(r'^shipping/$', 'commerce.views.shipping', name='shipping'),
     url(r'^add-address/$', 'commerce.views.add_address', name='add_address'),
     url(r'^checkout/$', 'commerce.views.checkout', name='checkout'),
+    url(r'^confirmation/$', 'commerce.views.confirmation', name='confirmation'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

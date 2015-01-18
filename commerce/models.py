@@ -34,7 +34,6 @@ class Address(models.Model):
     company = models.CharField(max_length=50, blank=True, verbose_name="Société")
     address = models.CharField(max_length=255, verbose_name="Adresse")
     additional_address = models.CharField(max_length=255, blank=True, verbose_name="Complément d'adresse")
-    country = models.CharField(max_length=150, verbose_name="Pays")
     postcode = models.CharField(max_length=5, verbose_name="Code postal")
     city = models.CharField(max_length=50, verbose_name="Ville")
     phone = models.CharField(max_length=10, verbose_name="Téléphone")
@@ -100,13 +99,13 @@ class Category(models.Model):
         next_main_category = Category.objects.filter(id__gt=self.id,parent_category_id=None).order_by('id').first()
 
         if not next_main_category:
-            products = Products.objects.filter(category_id__gte=(self.id))
+            products = Product.objects.filter(category_id__gte=(self.id))
         else:
-            products = Products.objects.filter(category_id__range=(self.id,next_main_category.id-1))
+            products = Product.objects.filter(category_id__range=(self.id,next_main_category.id-1))
         return products
 
 
-class Products(models.Model):
+class Product(models.Model):
     """
     Les produits sont rangés par catégories et sont référencés dans des lignes de commandes.
     """
@@ -134,7 +133,7 @@ class Photo(models.Model):
     """
     Les photos permettent d'illustrer les produits afin d'inciter l'internaute à les acheter.
     """
-    product = models.ForeignKey(Products)
+    product = models.ForeignKey(Product)
     photo = models.ImageField(upload_to='commerce/media')
 
 
@@ -171,12 +170,35 @@ class OrderDetail(models.Model):
     Elle est liée à une commande.
     """
     order = models.ForeignKey(Order, verbose_name="Commande associée")
-    product = models.ForeignKey(Products)
+    product = models.ForeignKey(Product)
     qty = models.IntegerField(verbose_name="Quantité")
     price = models.FloatField(verbose_name="Prix HT")
     vat = models.FloatField(verbose_name="TVA")
     total_price = models.FloatField(verbose_name="Prix TTC")
 
     class Meta:
-        verbose_name ='Ligne d\'une commande'
+        verbose_name = 'Ligne d\'une commande'
         verbose_name_plural = 'Lignes de commandes'
+
+
+class CartLine(models.Model):
+    """
+    Une ligne de panier client.
+    """
+    client = models.ForeignKey(Client)
+    product = models.ForeignKey(Product)
+    quantity = models.IntegerField()
+
+    class Meta:
+        verbose_name = 'Ligne d\'un panier client'
+        verbose_name_plural = 'Lignes d\'un panier client'
+
+    def total_ht(self):
+        return round(self.product.price * float(self.quantity),2)
+
+    def total_vat(self):
+        return round(self.product.price * float(self.quantity) * self.product.vat.percent, 2)
+
+    def total(self):
+        return round((self.product.price * float(self.quantity)) +
+                     (self.product.price * float(self.quantity) * self.product.vat.percent), 2)

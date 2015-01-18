@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block body %}
-    {% if goto == 'commerce:shipping' %}
+    {% if get.next == '/checkout/' %}
         <div class="process">
             <div class="process-row">
                 <div class="process-step active">
@@ -13,7 +13,7 @@
                     <p>2. Livraison</p>
                 </div>
                 <div class="process-step">
-                    <button type="button" class="btn btn-default btn-circle" disabled="disabled"><i class="fa fa-euro fa-3x"></i></button>
+                    <button type="button" class="btn btn-default btn-circle" disabled="disabled"><i class="fa fa-credit-card fa-3x"></i></button>
                     <p>3. Paiement</p>
                 </div>
                  <div class="process-step">

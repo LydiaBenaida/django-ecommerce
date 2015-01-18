@@ -131,3 +131,7 @@ a{
   line-height: 1.428571429;
   border-radius: 5px;
 }
+
+.thumbnail.shipping{
+    padding-left: 15px;
+}

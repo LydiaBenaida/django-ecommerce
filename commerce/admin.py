@@ -2,7 +2,7 @@ from django.contrib import admin
 from commerce.models import *
 
 class AddressAdmin(admin.ModelAdmin):
-    list_display = ('address', 'postcode', 'city', 'country', 'client')
+    list_display = ('address', 'postcode', 'city', 'client')
 
 class AddressInline(admin.StackedInline):
     model = Address
@@ -35,5 +35,5 @@ admin.site.register(Client, ClientAdmin)
 admin.site.register(Address, AddressAdmin)
 admin.site.register(VAT)
 admin.site.register(Category)
-admin.site.register(Products, ProductAdmin)
+admin.site.register(Product, ProductAdmin)
 admin.site.register(Order,OrderAdmin)

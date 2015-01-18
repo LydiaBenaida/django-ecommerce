@@ -3,7 +3,7 @@
 {% block body %}
     <h1 class="lead">Mon panier</h1>
 
-    {% if products %}
+    {% if cart %}
     <table class="table table-hover">
         <thead>
         <tr>
@@ -16,14 +16,14 @@
         </tr>
         </thead>
         <tbody>
-        {% for product in products %}
+        {% for cart_line in cart %}
             <tr>
-                <td>{{ product.name }}</td>
-                <td>{{ product.price }} €</td>
-                <td>{{ product.qty }}</td>
-                <td>{{ product.ht }} €</td>
-                <td>{{ product.tva }} €</td>
-                <td>{{ product.ttc }} €</td>
+                <td>{{ cart_line.product.name }}</td>
+                <td>{{ cart_line.product.price }} €</td>
+                <td>{{ cart_line.quantity }}</td>
+                <td>{{ cart_line.total_ht }} €</td>
+                <td>{{ cart_line.total_vat }} €</td>
+                <td>{{ cart_line.total }} €</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -33,13 +33,18 @@
             <th></th>
             <th></th>
             <th>À payer</th>
-            <th>{{ total }} €</th>
+            <th>{{ grand_total }} €</th>
         </tfoot>
     </table>
 
-    <a class="btn btn-default btn-lg" href="{% url 'commerce:clear_cart'%}"><i class="fa fa-trash"></i> Vider le panier</a>
+    <a class="btn btn-lg btn-primary pull-right" href="{% url 'commerce:shipping'%}"><i class="fa fa-shopping-cart"></i> Commander</a>
+    <a class="btn btn-danger pull-right" style="margin-right:20px;" href="{% url 'commerce:clear_cart'%}"><i class="fa fa-trash"></i> Vider le panier</a>
+
     {% else %}
-    Votre panier est vide
+        <div class="alert alert-warning" role="alert"><a href="{% url 'commerce:root' %}" class="btn btn-default btn-lg pull-right">Remplir mon panier !</a>
+            <i class="fa fa-shopping-cart fa-3x pull-left"></i> <h4>Votre panier est vide :'(</h4>
+            <p>Commencez dès maintenant à rechercher votre article préféré dans notre vaste catalogue de produits !</p>
+        </div>
     {% endif %}
 
 {% endblock %}

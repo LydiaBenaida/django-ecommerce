@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en"><head>
     <meta charset="utf-8">
@@ -5,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
+    <link rel="icon" href="{% static "favicon.ico" %}">
 
-    <title>{% block title %}Django Ecommerce{% endblock %}</title>
+    <title>{% block title %}Microgames, jeux et applications à petits prix{% endblock %}</title>
 
     <!-- Bootstrap core CSS -->
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
@@ -15,7 +16,6 @@
     <!-- Font awesome core CSS -->
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
-    {% load staticfiles %}
     <link href="{% static "css/app.css" %}" rel="stylesheet">
 
 
@@ -72,5 +72,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
+{% block javascripts %}{% endblock %}
 
 </body></html>

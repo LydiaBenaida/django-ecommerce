@@ -78,14 +78,13 @@
       <column name="company" sqlType="VARCHAR(50)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
       <column name="address" sqlType="VARCHAR(255)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
       <column name="additional_address" sqlType="VARCHAR(255)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
-      <column name="country" sqlType="VARCHAR(150)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
       <column name="postcode" sqlType="VARCHAR(5)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
       <column name="city" sqlType="VARCHAR(50)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
       <column name="phone" sqlType="VARCHAR(10)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
       <column name="mobilephone" sqlType="VARCHAR(10)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
       <column name="fax" sqlType="VARCHAR(10)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
-      <column name="client_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
       <column name="workphone" sqlType="VARCHAR(10)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
+      <column name="client_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
       <primary-key columns="id"/>
       <foreign-key name="#FAKE_commerce_address_1" columns="client_id" ref-table="commerce_client" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
       <exported-key name="#FAKE_commerce_client_1" table="commerce_client" schema="" catalog="" columns="default_shipping_address_id"/>
@@ -93,6 +92,17 @@
       <exported-key name="#FAKE_commerce_order_1" table="commerce_order" schema="" catalog="" columns="shipping_address_id"/>
       <exported-key name="#FAKE_commerce_order_2" table="commerce_order" schema="" catalog="" columns="invoicing_address_id"/>
       <index name="commerce_address_2bfe9d72" unique="true" columns="client_id"/>
+    </table>
+    <table name="commerce_cartline" schema="" catalog="" type="TABLE">
+      <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <column name="product_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <column name="quantity" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <column name="client_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <primary-key columns="id"/>
+      <foreign-key name="#FAKE_commerce_cartline_1" columns="client_id" ref-table="commerce_client" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
+      <foreign-key name="#FAKE_commerce_cartline_2" columns="product_id" ref-table="commerce_product" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
+      <index name="commerce_cartline_2bfe9d72" unique="true" columns="client_id"/>
+      <index name="commerce_cartline_9bea82de" unique="true" columns="product_id"/>
     </table>
     <table name="commerce_category" schema="" catalog="" type="TABLE">
       <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
@@ -102,7 +112,7 @@
       <primary-key columns="id"/>
       <foreign-key name="#FAKE_commerce_category_1" columns="parent_category_id" ref-table="commerce_category" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
       <exported-key name="#FAKE_commerce_category_1" table="commerce_category" schema="" catalog="" columns="parent_category_id"/>
-      <exported-key name="#FAKE_commerce_products_2" table="commerce_products" schema="" catalog="" columns="category_id"/>
+      <exported-key name="#FAKE_commerce_product_2" table="commerce_product" schema="" catalog="" columns="category_id"/>
       <index name="commerce_category_2263e5df" unique="true" columns="parent_category_id"/>
     </table>
     <table name="commerce_client" schema="" catalog="" type="TABLE">
@@ -115,6 +125,7 @@
       <foreign-key name="#FAKE_commerce_client_2" columns="default_invoicing_address_id" ref-table="commerce_address" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
       <foreign-key name="#FAKE_commerce_client_3" columns="user_id" ref-table="auth_user" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
       <exported-key name="#FAKE_commerce_address_1" table="commerce_address" schema="" catalog="" columns="client_id"/>
+      <exported-key name="#FAKE_commerce_cartline_1" table="commerce_cartline" schema="" catalog="" columns="client_id"/>
       <exported-key name="#FAKE_commerce_order_3" table="commerce_order" schema="" catalog="" columns="client_id"/>
       <index name="commerce_client_67393a7e" unique="true" columns="default_shipping_address_id"/>
       <index name="commerce_client_df414afc" unique="true" columns="default_invoicing_address_id"/>
@@ -133,7 +144,7 @@
       <foreign-key name="#FAKE_commerce_order_1" columns="shipping_address_id" ref-table="commerce_address" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
       <foreign-key name="#FAKE_commerce_order_2" columns="invoicing_address_id" ref-table="commerce_address" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
       <foreign-key name="#FAKE_commerce_order_3" columns="client_id" ref-table="commerce_client" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
-      <exported-key name="#FAKE_commerce_orderdetail_1" table="commerce_orderdetail" schema="" catalog="" columns="order_id"/>
+      <exported-key name="#FAKE_commerce_orderdetail_2" table="commerce_orderdetail" schema="" catalog="" columns="order_id"/>
       <index name="commerce_order_8fb9ffec" unique="true" columns="shipping_address_id"/>
       <index name="commerce_order_6cc74542" unique="true" columns="invoicing_address_id"/>
       <index name="commerce_order_2bfe9d72" unique="true" columns="client_id"/>
@@ -144,56 +155,45 @@
       <column name="price" sqlType="REAL" precision="2000000000" scale="10" nullable="false" jdbcType="6"/>
       <column name="vat" sqlType="REAL" precision="2000000000" scale="10" nullable="false" jdbcType="6"/>
       <column name="total_price" sqlType="REAL" precision="2000000000" scale="10" nullable="false" jdbcType="6"/>
-      <column name="product_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
       <column name="order_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
+      <column name="product_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
       <primary-key columns="id"/>
-      <foreign-key name="#FAKE_commerce_orderdetail_1" columns="order_id" ref-table="commerce_order" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
-      <foreign-key name="#FAKE_commerce_orderdetail_2" columns="product_id" ref-table="commerce_products" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
-      <index name="commerce_orderdetail_69dfcb07" unique="true" columns="order_id"/>
+      <foreign-key name="#FAKE_commerce_orderdetail_1" columns="product_id" ref-table="commerce_product" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
+      <foreign-key name="#FAKE_commerce_orderdetail_2" columns="order_id" ref-table="commerce_order" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
       <index name="commerce_orderdetail_9bea82de" unique="true" columns="product_id"/>
+      <index name="commerce_orderdetail_69dfcb07" unique="true" columns="order_id"/>
     </table>
     <table name="commerce_photo" schema="" catalog="" type="TABLE">
       <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <column name="produit_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
       <column name="photo" sqlType="VARCHAR(100)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
+      <column name="product_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
       <primary-key columns="id"/>
-      <foreign-key name="#FAKE_commerce_photo_1" columns="produit_id" ref-table="commerce_products" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
-      <index name="commerce_photo_8eb6132c" unique="true" columns="produit_id"/>
+      <foreign-key name="#FAKE_commerce_photo_1" columns="product_id" ref-table="commerce_product" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
+      <index name="commerce_photo_9bea82de" unique="true" columns="product_id"/>
     </table>
-    <table name="commerce_products" schema="" catalog="" type="TABLE">
+    <table name="commerce_product" schema="" catalog="" type="TABLE">
       <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <column name="thumbnail" sqlType="VARCHAR(100)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
       <column name="name" sqlType="VARCHAR(150)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
       <column name="short_desc" sqlType="VARCHAR(150)" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
       <column name="long_desc" sqlType="TEXT" precision="2000000000" scale="10" nullable="false" jdbcType="12"/>
       <column name="price" sqlType="REAL" precision="2000000000" scale="10" nullable="false" jdbcType="6"/>
+      <column name="thumbnail" sqlType="VARCHAR(100)" precision="2000000000" scale="10" nullable="true" jdbcType="12"/>
       <column name="category_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
       <column name="vat_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
       <primary-key columns="id"/>
-      <foreign-key name="#FAKE_commerce_products_1" columns="vat_id" ref-table="commerce_vat" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
-      <foreign-key name="#FAKE_commerce_products_2" columns="category_id" ref-table="commerce_category" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
-      <exported-key name="#FAKE_commerce_orderdetail_2" table="commerce_orderdetail" schema="" catalog="" columns="product_id"/>
-      <exported-key name="#FAKE_commerce_photo_1" table="commerce_photo" schema="" catalog="" columns="produit_id"/>
-      <exported-key name="#FAKE_commerce_products_photos_2" table="commerce_products_photos" schema="" catalog="" columns="products_id"/>
-      <index name="commerce_products_ac625cbc" unique="true" columns="vat_id"/>
-      <index name="commerce_products_b583a629" unique="true" columns="category_id"/>
-    </table>
-    <table name="commerce_products_photos" schema="" catalog="" type="TABLE">
-      <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <column name="products_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <column name="photo_id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <column name="sort_value" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
-      <primary-key columns="id"/>
-      <foreign-key name="#FAKE_commerce_products_photos_1" columns="photo_id" ref-table="photologue_photo" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
-      <foreign-key name="#FAKE_commerce_products_photos_2" columns="products_id" ref-table="commerce_products" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
-      <index name="commerce_products_photos_b4e75e23" unique="true" columns="photo_id"/>
-      <index name="commerce_products_photos_7a6b6708" unique="true" columns="products_id"/>
+      <foreign-key name="#FAKE_commerce_product_1" columns="vat_id" ref-table="commerce_vat" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
+      <foreign-key name="#FAKE_commerce_product_2" columns="category_id" ref-table="commerce_category" ref-schema="" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="1"/>
+      <exported-key name="#FAKE_commerce_cartline_2" table="commerce_cartline" schema="" catalog="" columns="product_id"/>
+      <exported-key name="#FAKE_commerce_orderdetail_1" table="commerce_orderdetail" schema="" catalog="" columns="product_id"/>
+      <exported-key name="#FAKE_commerce_photo_1" table="commerce_photo" schema="" catalog="" columns="product_id"/>
+      <index name="commerce_product_ac625cbc" unique="true" columns="vat_id"/>
+      <index name="commerce_product_b583a629" unique="true" columns="category_id"/>
     </table>
     <table name="commerce_vat" schema="" catalog="" type="TABLE">
       <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>
       <column name="percent" sqlType="REAL" precision="2000000000" scale="10" nullable="false" jdbcType="6"/>
       <primary-key columns="id"/>
-      <exported-key name="#FAKE_commerce_products_1" table="commerce_products" schema="" catalog="" columns="vat_id"/>
+      <exported-key name="#FAKE_commerce_product_1" table="commerce_product" schema="" catalog="" columns="vat_id"/>
     </table>
     <table name="django_admin_log" schema="" catalog="" type="TABLE">
       <column name="id" sqlType="INTEGER" precision="2000000000" scale="10" nullable="false" jdbcType="4"/>

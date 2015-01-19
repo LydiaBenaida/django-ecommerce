@@ -227,8 +227,8 @@ def display_cart(request):
     total = 0
     if not request.user.is_authenticated():
         if 'cart' in request.session:
-            for product_id, quantity in request.session['cart'].iteritems():
-                cart = list()
+            cart = list()
+            for product_id, quantity in request.session.get('cart').iteritems():
                 cart_line = CartLine(product_id=product_id, quantity=quantity)
                 total += cart_line.total()
                 list.append(cart, cart_line)

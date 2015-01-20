@@ -12,6 +12,10 @@
 
 voir *Requirement.txt*
 
+## Identifiants
+
+- Le compte super-administrateur pour accéder au backend est "jean/jean"
+
 ## Modèle de données
 
 ![MCD](screenshots/mcd-ecommerce.png)
@@ -23,6 +27,8 @@ voir *Requirement.txt*
 - Page de connexion/inscription
 - Panier de produits
 - Paiement
+- Espace client permettant de modifier les informations personnelles, de gérer les adresses et d'afficher les commandes passées.
+- Backend permettant de gérer les produits/commandes (/admin)
 
 ### Gestion du panier
 

@@ -12,6 +12,10 @@
 
 voir *Requirement.txt*
 
+## Modèle de données
+
+![MCD](screenshots/mcd-ecommerce.png)
+
 ## Fonctionnalités implémentées
 
 - Page d'accueil listant 5 produits

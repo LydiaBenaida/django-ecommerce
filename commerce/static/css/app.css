@@ -10,6 +10,12 @@ body > .container {
     background-color: yellowgreen;
 }
 
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+    background-color: yellowgreen;
+    border-color: yellowgreen;
+}
+
+
 a:hover, a:focus {
     color: darkgreen;
 }

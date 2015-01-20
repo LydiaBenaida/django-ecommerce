@@ -16,4 +16,7 @@ urlpatterns = patterns('',
     url(r'^add-address/$', 'commerce.views.add_address', name='add_address'),
     url(r'^checkout/$', 'commerce.views.checkout', name='checkout'),
     url(r'^confirmation/$', 'commerce.views.confirmation', name='confirmation'),
+    url(r'^account/$', 'commerce.views.account', name='account'),
+    url(r'^orders/$', 'commerce.views.orders', name='orders'),
+    url(r'^addresses/$', 'commerce.views.addresses', name='addresses'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

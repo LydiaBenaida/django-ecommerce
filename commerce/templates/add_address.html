@@ -2,30 +2,32 @@
 {% load bootstrap3 %}
 
 {% block body %}
-    <div class="process">
-        <div class="process-row">
-            <div class="process-step active">
-                <button type="button" class="btn btn-disabled btn-circle" disabled="disabled"><i class="fa fa-user fa-3x"></i></button>
-                <p>1. Identification</p>
-            </div>
-            <div class="process-step">
-                <button type="button" class="btn btn-success btn-circle" disabled="disabled"><i class="fa fa-truck fa-flip-horizontal fa-3x"></i></button>
-                <p>2. Livraison</p>
-            </div>
-            <div class="process-step">
-                <button type="button" class="btn btn-default btn-circle" disabled="disabled"><i class="fa fa-credit-card fa-3x"></i></button>
-                <p>3. Paiement</p>
-            </div>
-             <div class="process-step">
-                <button type="button" class="btn btn-default btn-circle" disabled="disabled"><i class="fa fa-check fa-3x"></i></button>
-                <p>4. Confirmation</p>
+    {% if get.next == '/shipping/' %}
+        <div class="process">
+            <div class="process-row">
+                <div class="process-step active">
+                    <button type="button" class="btn btn-disabled btn-circle" disabled="disabled"><i class="fa fa-user fa-3x"></i></button>
+                    <p>1. Identification</p>
+                </div>
+                <div class="process-step">
+                    <button type="button" class="btn btn-success btn-circle" disabled="disabled"><i class="fa fa-truck fa-flip-horizontal fa-3x"></i></button>
+                    <p>2. Livraison</p>
+                </div>
+                <div class="process-step">
+                    <button type="button" class="btn btn-default btn-circle" disabled="disabled"><i class="fa fa-credit-card fa-3x"></i></button>
+                    <p>3. Paiement</p>
+                </div>
+                 <div class="process-step">
+                    <button type="button" class="btn btn-default btn-circle" disabled="disabled"><i class="fa fa-check fa-3x"></i></button>
+                    <p>4. Confirmation</p>
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title"><i class="fa fa-credit-card fa-flip-horizontal"></i> Adresse de facturation</h3>
+            <h3 class="panel-title"> Saisie d'une nouvelle addresse</h3>
         </div>
         <div class="panel-body">
             <form novalidate method="post" class="form">

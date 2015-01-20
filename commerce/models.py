@@ -22,6 +22,12 @@ class Client(models.Model):
     def __unicode__(self):
         return self.user.username + " (" + self.user.first_name + " " + self.user.last_name + ")"
 
+    def addresses(self):
+        return Address.objects.filter(client_id=self.id)
+
+    def orders(self):
+        return Order.objects.filter(client_id=self.id).order_by('-id')
+
 
 class Address(models.Model):
     """
@@ -176,6 +182,18 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Commande'
         verbose_name_plural = 'Commandes'
+
+    @property
+    def total(self):
+        total = 0
+        order_details = OrderDetail.objects.filter(order_id=self.id)
+        for order_detail in order_details:
+            total += order_detail.total()
+        return round(total,2)
+
+    def article_qty(self):
+        order_details = OrderDetail.objects.filter(order_id=self.id)
+        return len(order_details)
 
 
 class OrderDetail(models.Model):

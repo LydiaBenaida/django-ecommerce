@@ -1,6 +1,6 @@
 # coding=utf-8
 from commerce.models import *
-from commerce.forms import RegisterForm, AddAddress
+from commerce.forms import RegisterForm, RegisterFormUpdate, AddAddress
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
@@ -137,7 +137,6 @@ def __create_order_from_database_cart(request):
     """
     Cette fonction permet créer un objet Order et les objets OrderDetail associés à partir
     :param request:
-    :param total_price:
     :return:
     """
 
@@ -203,8 +202,10 @@ def add_to_cart(request, product_id, qty):
     messages.add_message(request, messages.SUCCESS,
                          'Le produit a été correctement ajouté à votre panier. ' + lien_panier + lien_dismit
                          )
-
-    return redirect(request.META.get('HTTP_REFERER'))
+    if request.META.get('HTTP_REFERER'):
+        return redirect(request.META.get('HTTP_REFERER'))
+    else:
+        return redirect(reverse('commerce:root'))
 
 
 def clear_cart(request):
@@ -245,7 +246,7 @@ def display_cart(request):
 @login_required(login_url='/sign-in')
 def shipping(request):
     client = Client.objects.get(user_id=request.user.id)
-    addresses = Address.objects.filter(client_id=client.id)
+    addresses_list = Address.objects.filter(client_id=client.id)
 
     if request.method == 'POST' and request.POST['shipping_address'] and request.POST['invoicing_address']:
         request.session['shipping_address'] = int(request.POST['shipping_address'])
@@ -261,7 +262,7 @@ def shipping(request):
     if request.GET.get('next', False):
         return redirect(request.GET['next'])
     else:
-        return render(request, 'shipping.html', {'addresses': addresses,
+        return render(request, 'shipping.html', {'addresses': addresses_list,
                                                  'shipping_address': shipping_address,
                                                  'invoicing_address': invoicing_address})
 
@@ -276,10 +277,10 @@ def add_address(request):
             address = add_address_form.save(commit=False)
             address.client_id = client.id
             address.save()
-            if request.GET['next']:
+            if request.GET.get('next', False):
                 return redirect(request.GET['next'])
             else:
-                redirect('')
+                redirect('commerce:addresses')
     else:
         add_address_form = AddAddress()
     return render(request, 'add_address.html', {'add_address_form': add_address_form})
@@ -304,25 +305,26 @@ def checkout(request):
         stripe.api_key = "sk_test_1g1mSv8k1NZxmsfDKvIckMZL"
 
         # Get the credit card details submitted by the form
-        token = request.POST['stripeToken']
+        token = request.POST.get('stripeToken', None)
 
         order = __create_order_from_database_cart(request)
 
         # Create the charge on Stripe's servers - this will charge the user's card
-        try:
-            charge = stripe.Charge.create(
-                amount=total_cents,  # amount in cents, again
-                currency="eur",
-                card=token,
-                description='Charge for order ' + str(order.id)
-            )
-            order.status = Order.PAID
-            order.stripe_charge_id = charge.id
-            order.save()
-            return redirect(reverse('commerce:confirmation'))
-        except stripe.CardError, e:
-            # The card has been declined
-            pass
+        if token:
+            try:
+                charge = stripe.Charge.create(
+                    amount=total_cents,  # amount in cents, again
+                    currency="eur",
+                    card=token,
+                    description='Charge for order ' + str(order.id)
+                )
+                order.status = Order.PAID
+                order.stripe_charge_id = charge.id
+                order.save()
+                return redirect(reverse('commerce:confirmation'))
+            except stripe.CardError, e:
+                # The card has been declined
+                pass
     return render(request, 'checkout.html', {'cart': cart,
                                              'grand_total': total,
                                              'grand_total_cents': total_cents,
@@ -333,3 +335,31 @@ def checkout(request):
 def confirmation(request):
 
     return render(request, 'confirmation.html')
+
+
+@login_required(login_url='/sign-in')
+def account(request):
+    form = RegisterFormUpdate(instance=request.user)
+    if request.method == 'POST':
+        form = RegisterFormUpdate(request.POST)
+        if form.is_valid():
+            user = request.user
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.email = form.cleaned_data['email']
+            user.save()
+            messages.add_message(request, messages.SUCCESS, "Vos informations ont été correctement mises à jour.")
+            return render(redirect('commerce:account'))
+    return render(request, 'account.html', {'form': form})
+
+
+@login_required(login_url='/sign-in')
+def orders(request):
+    client = Client.objects.get(user_id=request.user.id)
+    return render(request, 'orders.html', {'orders': client.orders()})
+
+
+@login_required(login_url='/sign-in')
+def addresses(request):
+    client = Client.objects.get(user_id=request.user.id)
+    return render(request, 'addresses.html', {'addresses': client.addresses()})

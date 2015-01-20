@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <div class="col-md-3">
+        <p class="lead">Mon espace client</p>
+        <div class="list-group">
+            <a href="{% url 'commerce:account' %}" class="list-group-item active"><i class="fa fa-angle-right"></i>&nbsp; Mes informations personnelles</a>
+            <a href="{% url 'commerce:orders' %}" class="list-group-item"><i class="fa fa-angle-right"></i>&nbsp; Mes commandes</a>
+            <a href="{% url 'commerce:addresses' %}" class="list-group-item"><i class="fa fa-angle-right"></i>&nbsp; Mes adresses</a>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Mes informations personnelles</h3>
+            </div>
+            <div class="panel-body">
+                {% load bootstrap3 %}
+
+                <form novalidate method="post" class="form">
+                    {% csrf_token %}
+
+                    {% bootstrap_form form %}
+                    {% buttons %}
+                        <button type="submit" class="btn btn-block btn-lg btn-primary" name="register">
+                            Modfier mes informations personnelles
+                        </button>
+                    {% endbuttons %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

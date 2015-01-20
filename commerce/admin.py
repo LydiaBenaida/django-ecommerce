@@ -37,19 +37,15 @@ class OrderDetailInline(admin.TabularInline):
 
     def total(self, instance):
         if instance.id:
-            return instance.total()
+            return instance.total
         else:
             return ""
 
 
 class OrderAdmin(admin.ModelAdmin):
     def total(self, instance):
-        total = 0
-        order_details = OrderDetail.objects.filter(order__client_id=instance.client_id)
-        for order_detail in order_details:
-            total += order_detail.total()
-        return total
-    list_display = ('order_date', 'total', 'client', 'shipping_address')
+        return instance.total
+    list_display = ('order_date', 'client', 'shipping_address', 'stripe_charge_id', 'total')
     list_filter = ('client',)
     readonly_fields = ('total', 'stripe_charge_id')
     inlines = [

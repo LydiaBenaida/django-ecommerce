@@ -92,6 +92,7 @@ class Category(models.Model):
     def __unicode__(self):
         return self.name
 
+    # noinspection PyMethodFirstArgAssignment
     def breadcrum(self):
         """Retourne un fil d'ariane permettant à l'utilisateur d'afficher l'arborescence de la catégorie"""
         breadcrum = list()

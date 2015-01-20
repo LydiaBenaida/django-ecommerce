@@ -225,6 +225,10 @@ class CommerceTest(TestCase):
         self.failUnlessEqual(response.status_code, 200)
 
     def test_page_confirmation(self):
+        """
+        Ce test vérifie l'affichage correct de la page de confirmation.
+        :return:
+        """
         self.client.login(username='jean', password='jean')
         url = reverse('commerce:confirmation')
         response = self.client.get(url)
@@ -232,6 +236,10 @@ class CommerceTest(TestCase):
         self.failUnlessEqual(response.status_code, 200)
 
     def test_page_account(self):
+        """
+        Ce test vérifie l'affichage correct du formulaire de modification des données utilisateur.
+        :return:
+        """
         self.client.login(username='jean', password='jean')
         url = reverse('commerce:account')
         response = self.client.get(url)
@@ -240,6 +248,10 @@ class CommerceTest(TestCase):
         self.failUnlessEqual(response.status_code, 200)
 
     def test_add_addresse(self):
+        """
+        Ce test permet de vérifier l'ajout correct d'une adresse au compte client.
+        :return:
+        """
         self.client.login(username='jean', password='jean')
         url = reverse('commerce:add_address')
         response = self.client.post(url, {'gender': 'MR', 'first_name': 'Jean', 'last_name': 'Traullé',
@@ -251,8 +263,11 @@ class CommerceTest(TestCase):
         self.assertEqual(len(response.context['addresses']), 1)
         self.failUnlessEqual(response.status_code, 200)
 
-
     def test_register_order(self):
+        """
+        Ce test permet de vérifier l'ajout correct d'une commande au compte client.
+        :return:
+        """
         self.client.login(username='jean', password='jean')
         self.test_add_to_cart_loggedin()
         self.test_add_addresse()

@@ -1,8 +1,8 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import  url
 from django.conf import settings
 from django.conf.urls.static import static
 
-urlpatterns = patterns('',
+urlpatterns = ['',
     url(r'^$', 'commerce.views.index', name='root'),
     url(r'^sign-in/(?P<goto>\w+:\w+)/$', 'commerce.views.sign_in', name='sign_in_goto'),
     url(r'^sign-in/$', 'commerce.views.sign_in', name='sign_in'),
@@ -19,4 +19,4 @@ urlpatterns = patterns('',
     url(r'^account/$', 'commerce.views.account', name='account'),
     url(r'^orders/$', 'commerce.views.orders', name='orders'),
     url(r'^addresses/$', 'commerce.views.addresses', name='addresses'),
-) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

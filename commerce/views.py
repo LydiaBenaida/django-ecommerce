@@ -322,7 +322,7 @@ def checkout(request):
                 order.stripe_charge_id = charge.id
                 order.save()
                 return redirect(reverse('commerce:confirmation'))
-            except stripe.CardError, e:
+            except stripe.CardError as e:
                 # The card has been declined
                 pass
     return render(request, 'checkout.html', {'cart': cart,

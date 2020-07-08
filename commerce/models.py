@@ -7,16 +7,18 @@ class Client(models.Model):
     """
     Un client est une personne inscrite au site dans le but d'effectuer une commande.
     """
-    user = models.ForeignKey(User, verbose_name="Utilisateur associé")
+    user = models.ForeignKey(User, verbose_name="Utilisateur associé",on_delete=models.CASCADE)
     default_shipping_address = models.ForeignKey("Address",
                                                  related_name="default_shipping_address",
                                                  null=True,
-                                                 verbose_name="Adresse de livraison par défaut"
+                                                 verbose_name="Adresse de livraison par défaut",
+                                                 on_delete=models.CASCADE
                                                  )
     default_invoicing_address = models.ForeignKey("Address",
                                                   related_name="default_invoicing_address",
                                                   null=True,
-                                                  verbose_name="Adresse de facturation par défaut"
+                                                  verbose_name="Adresse de facturation par défaut",
+                                                  on_delete=models.CASCADE
                                                   )
 
     def __unicode__(self):
@@ -33,7 +35,7 @@ class Address(models.Model):
     """
     Une adresse est liée à un client et pourra être utilisée pour la livraison ou la facturation d'une commande.
     """
-    client = models.ForeignKey(Client)
+    client = models.ForeignKey(Client,on_delete=models.CASCADE)
     MISTER = 'MR'
     MISS = 'MISS'
     MISSES = 'MRS'
@@ -83,7 +85,7 @@ class Category(models.Model):
     """
     name = models.CharField(max_length=150, verbose_name="Nom de la catégorie")
     short_desc = models.CharField(max_length=150, verbose_name="Description courte", blank=True)
-    parent_category = models.ForeignKey("Category", null=True, blank=True, verbose_name="Catégorie parente")
+    parent_category = models.ForeignKey("Category", null=True, blank=True, verbose_name="Catégorie parente",on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Catégorie de produits'
@@ -125,11 +127,11 @@ class Product(models.Model):
     Les produits sont rangés par catégories et sont référencés dans des lignes de commandes.
     """
     name = models.CharField(max_length=150, verbose_name="Nom du produit")
-    category = models.ForeignKey(Category, verbose_name="Catégorie du produit")
+    category = models.ForeignKey(Category, verbose_name="Catégorie du produit",on_delete=models.CASCADE)
     short_desc = models.CharField(max_length=150, verbose_name="Description courte")
     long_desc = models.TextField(verbose_name="Description longue")
     price = models.FloatField(verbose_name="Prix HT du produit")
-    vat = models.ForeignKey(VAT, verbose_name="Taux de TVA")
+    vat = models.ForeignKey(VAT, verbose_name="Taux de TVA",on_delete=models.CASCADE)
     thumbnail = models.ImageField(verbose_name="Miniature du produit", upload_to='commerce/media', null=True)
 
     class Meta:
@@ -148,7 +150,7 @@ class Photo(models.Model):
     """
     Les photos permettent d'illustrer les produits afin d'inciter l'internaute à les acheter.
     """
-    product = models.ForeignKey(Product)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
     photo = models.ImageField(upload_to='commerce/media')
 
 
@@ -156,14 +158,16 @@ class Order(models.Model):
     """
     Une commande est passée par un client et comprend des lignes de commandes ainsi que des adresses.
     """
-    client = models.ForeignKey(Client, verbose_name="Client ayant passé commande")
+    client = models.ForeignKey(Client, verbose_name="Client ayant passé commande",on_delete=models.CASCADE)
     shipping_address = models.ForeignKey(Address,
                                          verbose_name="Adresse de livraison",
-                                         related_name="order_shipping_address"
+                                         related_name="order_shipping_address",
+                                         on_delete=models.CASCADE
                                          )
     invoicing_address = models.ForeignKey(Address,
                                           verbose_name="Adresse de facturation",
-                                          related_name="order_invoicing_address"
+                                          related_name="order_invoicing_address",
+                                          on_delete=models.CASCADE
                                           )
     order_date = models.DateField(verbose_name="Date de la commande", auto_now=True)
     shipping_date = models.DateField(verbose_name="Date de l'expédition", null=True)
@@ -202,8 +206,8 @@ class OrderDetail(models.Model):
     Une ligne de commande référence un produit, la quantité commandée ainsi que les prix associés.
     Elle est liée à une commande.
     """
-    order = models.ForeignKey(Order, verbose_name="Commande associée")
-    product = models.ForeignKey(Product)
+    order = models.ForeignKey(Order, verbose_name="Commande associée",on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
     qty = models.IntegerField(verbose_name="Quantité")
     product_unit_price = models.FloatField(verbose_name="Prix unitaire du produit")
     vat = models.FloatField(verbose_name="Taux de TVA")
@@ -227,8 +231,8 @@ class CartLine(models.Model):
     """
     Une ligne de panier client.
     """
-    client = models.ForeignKey(Client)
-    product = models.ForeignKey(Product)
+    client = models.ForeignKey(Client,on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
     quantity = models.IntegerField()
 
     class Meta:
